@@ -5,6 +5,10 @@ import EmojiPicker from 'emoji-picker-react';
 const Chat = () => {
 const [open, setOpen] = useState(false);
 const [text, setText] = useState("");
+const [img, setImg] =useState({
+    file: null,
+    url: "",
+})
 
 const endRef = useRef(null)
 
@@ -15,6 +19,41 @@ useEffect(()=>{
 const handleEmoji = e => {
     setText(prev => prev + e.emoji );
     setOpen(false)
+}
+
+const handleImg = e => {
+    if(e.target.files[0]) {
+    setImg({
+        file:e.target.files[0],
+        url: URL.createObjectURL(e.target.files[0])
+    })
+    }
+}
+
+
+const handleSend = async () => {
+    if(text === "") return;
+
+    let imgUrl = null
+
+    try {
+        
+        if(img.file){
+            imgUrl = await upload(img.file);
+        }
+
+        // logika wysyłania wiadomości oraz jej wyświetlanie w okienku czatu
+
+    } catch(err){
+        console.log(err)
+    }
+
+    setImg({
+        file:null,
+        url:"",
+    })
+
+    setText("")
 }
 
 
@@ -45,7 +84,6 @@ const handleEmoji = e => {
                     </div>
                 </div>
                 <div className="message own">
-                    
                     <div className='texts'>
                         <img src="https://images.freeimages.com/images/large-previews/b70/pigeon-1315528.jpg" alt="" />
                         <p>
@@ -67,7 +105,6 @@ const handleEmoji = e => {
                 </div>
                 <div className="message own">
                     <div className='texts'>
-                        <img src="https://images.freeimages.com/images/large-previews/b70/pigeon-1315528.jpg" alt="" />
                         <p>
                         Było dwóch braci, Żuraw i Czapla. Żuraw był zdrowy, a czapla chorował na cukrzyce. Żaden nie poszedł do sanatorium. 
                         Zgadnij, który z nich przeżył. Czapla przeżył, ale dlatego bo był cwany, upierdoliło mu tylko nogę. A Żurawia zjedli.
@@ -75,11 +112,19 @@ const handleEmoji = e => {
                         <span>1 min ago</span>
                     </div>
                 </div>
+                {img.url && (<div className='message own'>
+                    <div className='texts'>
+                        <img src={img.url} alt="" />
+                    </div>
+                </div>)}
                 <div ref={endRef} ></div>
             </div>
             <div className='bottom'>
                 <div className='icons'>
-                    <img src="./img.png" alt="" />
+                    <label htmlFor="file">
+                        <img src="./img.png" alt="" />
+                    </label>
+                    <input type="file" id='file' style={{display:"none"}} onChange={handleImg} />
                 </div>
                 <input type="text" 
                 placeholder='Napisz wiadomość do kochanki...'
@@ -93,10 +138,33 @@ const handleEmoji = e => {
                     </div>
                     
                 </div>
-                <button className='sendButton'>Wyślij</button>
+                <button className='sendButton' onClick={handleSend}>Wyślij</button>
             </div>
         </div>
     )
 }
 
 export default Chat
+
+// to w div user
+/* 
+    <img src={user?.avatar || "./avatar.png"} alt="" />
+    <h2>{user?.username"}</h2>
+*/
+//to niżej zamiast tych div z wiadomosciami
+
+/*
+{chat?.messages?.map((message) => (
+    <div className={message.senderId === currentUser?.id ? "message own" : "message" } key={message?.createAt}>
+        <div className='texts'>
+            {message.img &&
+            <img src={message.img} alt="" />
+            }
+            <p>
+                {message.text}
+            </p>
+            //<span>{message}</span>
+        </div>
+    </div>
+))}
+*/

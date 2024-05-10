@@ -63,10 +63,16 @@ const Detail = () => {
                         <img src="./arrowUp.png" alt="" />
                     </div>
                 </div>
-                <button className='logout'>Wyloguj</button>
+                <button className='logout' onClick={()=>auth.logout()} >Wyloguj</button>
             </div>
         </div>
     )
 }
 
 export default Detail
+
+//w div user
+/*
+    <img src={user?.avatar || "./avatar.png"} alt="" />
+    <h2>{user?.username"}</h2>
+*/
